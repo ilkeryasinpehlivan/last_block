@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# env
+.env
+
+# build
+dist/
+build/
+
+# logs
+*.log
+
+# OS
+.DS_Store
+
+# vscode (opsiyonel)
+.vscode/*
+!.vscode/extensions.json
+
+# Capacitor
+android/app/build/
+android/.gradle/

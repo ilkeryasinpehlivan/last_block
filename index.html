@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Last Block: Endless Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app" class="app-container">
+        <!-- Main Screen Wrapper (Fills 1fr) -->
+        <main class="screens-wrapper">
+
+            <!-- Main Menu -->
+            <section id="menu-screen" class="screen active">
+                <h1 class="game-title">LAST<span>BLOCK</span></h1>
+                <div class="menu-buttons">
+                    <button id="start-btn" class="btn btn-primary">OYUNA BAŞLA</button>
+                    <button id="settings-btn" class="btn btn-secondary">AYARLAR</button>
+                </div>
+                <div class="high-score-display">
+                    EN YÜKSEK: <span id="menu-high-score">0</span>
+                </div>
+            </section>
+
+            <!-- Game Screen -->
+            <section id="game-screen" class="screen">
+                <header class="game-header">
+                    <div class="stat-box">
+                        <span class="stat-label">SKOR</span>
+                        <span id="current-score" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">SÜRE</span>
+                        <span id="game-timer" class="stat-value">00:00</span>
+                    </div>
+                </header>
+
+                <div id="game-container">
+                    <canvas id="game-canvas"></canvas>
+                </div>
+
+                <div id="piece-inventory" class="piece-tray">
+                    <div class="inventory-slot" data-index="0"></div>
+                    <div class="inventory-slot" data-index="1"></div>
+                    <div class="inventory-slot" data-index="2"></div>
+                </div>
+
+                <div class="rotation-hint">
+                    <span>Dokunarak Döndür • Sürükleyerek Yerleştir</span>
+                </div>
+            </section>
+
+            <!-- Game Over Screen -->
+            <section id="game-over-screen" class="screen">
+                <div class="overlay-content">
+                    <h2 class="title-red">EYVAH!</h2>
+                    <div class="final-stats">
+                        <p>Skor: <span id="final-score">0</span></p>
+                        <p>En Yüksek: <span id="final-high-score">0</span></p>
+                    </div>
+                    <div class="rewarded-ad-container" style="margin-bottom: 20px; width: 100%;">
+                        <button id="watch-ad-btn" class="btn btn-rewarded" style="width: 100%;">
+                            🎥 REKLAM İZLE VE DEVAM ET
+                        </button>
+                    </div>
+                    <div class="game-over-buttons"
+                        style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                        <button id="restart-btn" class="btn btn-primary">YENİDEN BAŞLA</button>
+                        <button id="home-btn" class="btn btn-secondary">ANA MENÜ</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Screen -->
+            <section id="settings-screen" class="screen">
+                <div class="overlay-content">
+                    <h2 style="margin-bottom: 20px;">AYARLAR</h2>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <span>SES</span>
+                            <label class="switch">
+                                <input type="checkbox" id="sound-toggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>TİTREŞİM</span>
+                            <label class="switch">
+                                <input type="checkbox" id="vibe-toggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <button id="settings-close-btn" class="btn btn-secondary" style="width: 100%;">GERİ</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Global Banner Footer (Fixed 50px) -->
+        <footer class="game-footer">
+            <div id="banner-ad-placeholder" class="banner-ad"></div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="storage.js"></script>
+    <script src="effects.js"></script>
+    <script src="ui.js"></script>
+    <script src="game.js"></script>
+    <script type="module">
+        import { AdManager } from './AdManager.js';
+        document.addEventListener('deviceready', () => {
+            AdManager.initialize();
+        });
+    </script>
+</body>
+
+</html>
