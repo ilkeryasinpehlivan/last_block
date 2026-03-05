@@ -39,7 +39,8 @@ const StorageManager = {
         const settings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
         return settings ? JSON.parse(settings) : {
             sound: true,
-            vibration: true
+            vibration: true,
+            lang: 'tr'
         };
     },
 

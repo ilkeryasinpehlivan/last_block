@@ -19,14 +19,20 @@
 
             <!-- Main Menu -->
             <section id="menu-screen" class="screen active">
-                <h1 class="game-title">LAST<span>BLOCK</span></h1>
-                <div class="menu-buttons">
-                    <button id="start-btn" class="btn btn-primary">OYUNA BAŞLA</button>
-                    <button id="settings-btn" class="btn btn-secondary">AYARLAR</button>
+                <div class="menu-content-wrapper">
+                    <h1 class="game-title">LAST<br><span>BLOCK</span></h1>
+                    <div class="menu-buttons">
+                        <button id="start-btn" class="btn btn-primary">OYUNA BAŞLA</button>
+                        <button id="settings-btn" class="btn btn-secondary">AYARLAR</button>
+                    </div>
+                    <div class="high-score-container">
+                        <div class="high-score-label">EN YÜKSEK SKOR</div>
+                        <div class="high-score-line"></div>
+                        <div id="menu-high-score" class="high-score-value">0</div>
+                    </div>
                 </div>
-                <div class="high-score-display">
-                    EN YÜKSEK: <span id="menu-high-score">0</span>
-                </div>
+                <!-- Bottom Decorative Grid -->
+                <div class="menu-bottom-grid"></div>
             </section>
 
             <!-- Game Screen -->
@@ -84,14 +90,21 @@
                     <h2 style="margin-bottom: 20px;">AYARLAR</h2>
                     <div class="settings-list">
                         <div class="setting-item">
-                            <span>SES</span>
+                            <span id="label-lang">DİL</span>
+                            <div class="lang-toggle-group">
+                                <button id="lang-tr-btn" class="lang-btn active">TR</button>
+                                <button id="lang-en-btn" class="lang-btn">EN</button>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <span id="label-sound">SES</span>
                             <label class="switch">
                                 <input type="checkbox" id="sound-toggle" checked>
                                 <span class="slider"></span>
                             </label>
                         </div>
                         <div class="setting-item">
-                            <span>TİTREŞİM</span>
+                            <span id="label-vibe">TİTREŞİM</span>
                             <label class="switch">
                                 <input type="checkbox" id="vibe-toggle" checked>
                                 <span class="slider"></span>
