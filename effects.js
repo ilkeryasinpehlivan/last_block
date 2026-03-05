@@ -26,6 +26,24 @@ const Effects = {
         }
     },
 
+    createFirework: function (x, y, color) {
+        for (let i = 0; i < 40; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 12 + 4;
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: Math.random() * 6 + 2,
+                color: color,
+                life: 1.5,
+                decay: Math.random() * 0.03 + 0.015,
+                glow: true
+            });
+        }
+    },
+
     updateAndDraw: function (dt) {
         if (!this.ctx) return;
 
@@ -42,9 +60,14 @@ const Effects = {
 
             this.ctx.globalAlpha = p.life;
             this.ctx.fillStyle = p.color;
+            if (p.glow) {
+                this.ctx.shadowBlur = 15;
+                this.ctx.shadowColor = p.color;
+            }
             this.ctx.beginPath();
             this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             this.ctx.fill();
+            this.ctx.shadowBlur = 0;
         }
         this.ctx.globalAlpha = 1.0;
     },

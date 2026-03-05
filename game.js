@@ -414,7 +414,40 @@ const Game = {
 
     gameOver: function () {
         this.state = GameState.GAME_OVER;
-        UI.showGameOver(this.score);
+
+        // Trigger Firework Explosions for all blocks
+        let delay = 0;
+        const cellsWithBlocks = [];
+
+        for (let r = 0; r < this.gridSize; r++) {
+            for (let c = 0; c < this.gridSize; c++) {
+                if (this.grid[r][c]) {
+                    cellsWithBlocks.push({ r, c, color: this.grid[r][c].color });
+                }
+            }
+        }
+
+        // Shuffle for random explosion order
+        cellsWithBlocks.sort(() => Math.random() - 0.5);
+
+        cellsWithBlocks.forEach((cell, index) => {
+            setTimeout(() => {
+                Effects.createFirework(
+                    cell.c * this.cellSize + this.cellSize / 2,
+                    cell.r * this.cellSize + this.cellSize / 2,
+                    cell.color
+                );
+                this.grid[cell.r][cell.c] = null; // Clear from grid visually
+                SoundManager.playClick();
+
+                if (index % 5 === 0 && navigator.vibrate) navigator.vibrate(20);
+            }, index * 30); // Faster stagger
+        });
+
+        // Wait for all explosions to finish before showing UI
+        setTimeout(() => {
+            UI.showGameOver(this.score);
+        }, Math.max(1500, cellsWithBlocks.length * 30 + 500));
     },
 
     resumeAfterAd: function () {
