@@ -13,6 +13,14 @@
 </head>
 
 <body>
+    <script>
+        console.log("Startup: Core scripts loading...");
+        window.onerror = function (msg, url, line, col, error) {
+            console.error("GLOBAL JS Error: " + msg + " at " + url + ":" + line);
+            alert("JS Error: " + msg);
+            return false;
+        };
+    </script>
     <div id="app" class="app-container">
         <!-- Main Screen Wrapper (Fills 1fr) -->
         <main class="screens-wrapper">
@@ -129,9 +137,18 @@
     <script src="game.js"></script>
     <script type="module">
         import { AdManager } from './AdManager.js';
-        document.addEventListener('deviceready', () => {
-            AdManager.initialize();
-        });
+
+        const initAds = async () => {
+            try {
+                await AdManager.initialize();
+                console.log("AdMob Initialized");
+            } catch (e) {
+                console.error("AdMob Init Failed", e);
+            }
+        };
+
+        if (document.readyState === 'complete') initAds();
+        else window.addEventListener('load', initAds);
     </script>
 </body>
 

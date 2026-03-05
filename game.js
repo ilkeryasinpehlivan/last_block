@@ -58,23 +58,35 @@ const Game = {
     dragStartPos: { x: 0, y: 0 },
 
     init: function () {
-        this.canvas = document.getElementById('game-canvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.resize();
-        this.initGrid();
+        console.log("Game: Initializing...");
+        try {
+            this.canvas = document.getElementById('game-canvas');
+            if (!this.canvas) throw new Error("Canvas not found");
 
-        UI.init();
-        Effects.init(this.ctx);
+            this.ctx = this.canvas.getContext('2d');
+            this.resize();
+            this.initGrid();
 
-        window.addEventListener('resize', () => this.resize());
-        this.setupInput();
+            UI.init();
+            Effects.init(this.ctx);
 
-        requestAnimationFrame((t) => this.loop(t));
+            window.addEventListener('resize', () => this.resize());
+            this.setupInput();
+
+            // Mobile layout settling
+            setTimeout(() => this.resize(), 100);
+
+            requestAnimationFrame((t) => this.loop(t));
+            console.log("Game: Initialization Success");
+        } catch (e) {
+            console.error("Game: Initialization Failed", e);
+        }
     },
 
     resize: function () {
         const container = document.getElementById('game-container');
-        const size = container.clientWidth;
+        if (!container) return;
+        const size = container.clientWidth || 300; // Fallback
         this.canvas.width = size;
         this.canvas.height = size;
         this.cellSize = size / this.gridSize;
@@ -571,5 +583,29 @@ const Game = {
     }
 };
 
-window.addEventListener('load', () => Game.init());
+const startApp = async () => {
+    console.log("App: startApp triggered - State:", document.readyState);
+    try {
+        // Hide Splash Screen
+        if (window.Capacitor && window.Capacitor.Plugins.SplashScreen) {
+            console.log("App: Hiding Splash Screen");
+            await window.Capacitor.Plugins.SplashScreen.hide();
+        }
+
+        // Initialize Game
+        Game.init();
+        console.log("App: Game.init complete");
+
+    } catch (e) {
+        console.error("App: Startup failed", e);
+        alert("Startup Critical Error: " + e.message);
+    }
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+} else {
+    startApp();
+}
+
 window.Game = Game;

@@ -90,7 +90,6 @@ body {
 .screen.active {
     display: flex;
     opacity: 1;
-    top: 50px;
 }
 
 #menu-screen {

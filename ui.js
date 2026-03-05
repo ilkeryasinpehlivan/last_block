@@ -45,54 +45,84 @@ const UI = {
     },
 
     init: function () {
-        this.screens = {
-            menu: document.getElementById('menu-screen'),
-            game: document.getElementById('game-screen'),
-            gameOver: document.getElementById('game-over-screen'),
-            settings: document.getElementById('settings-screen')
-        };
+        console.log("UI: Initializing...");
+        try {
+            this.screens = {
+                menu: document.getElementById('menu-screen'),
+                game: document.getElementById('game-screen'),
+                gameOver: document.getElementById('game-over-screen'),
+                settings: document.getElementById('settings-screen')
+            };
 
-        this.slots = Array.from(document.querySelectorAll('.inventory-slot'));
+            this.slots = Array.from(document.querySelectorAll('.inventory-slot'));
 
-        this.setupEventListeners();
-        this.updateHighScoreDisplay();
-        this.loadSettingsToUI();
-        this.updateLanguage(); // Apply initial language
-        this.setupAndroidBackButton();
+            this.setupEventListeners();
+            this.updateHighScoreDisplay();
+            this.loadSettingsToUI();
+            this.updateLanguage(); // Apply initial language
+            this.setupAndroidBackButton();
+
+            // Explicitly show menu
+            this.showScreen('menu');
+
+            // Remove startup guard
+            const guard = document.getElementById('startup-guard');
+            if (guard) guard.style.display = 'none';
+
+            console.log("UI: Initialization Success");
+        } catch (e) {
+            console.error("UI: Initialization Failed", e);
+        }
     },
 
     updateLanguage: function () {
         const lang = StorageManager.getSettings().lang || 'tr';
         const t = this.translations[lang];
 
+        const setText = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        };
+
+        const setSelectorText = (selector, text) => {
+            const el = document.querySelector(selector);
+            if (el) el.textContent = text;
+        };
+
         // Update UI Text
-        document.getElementById('start-btn').textContent = t.start;
-        document.getElementById('settings-btn').textContent = t.settings;
-        document.querySelector('.high-score-label').textContent = t.highScore;
+        setText('start-btn', t.start);
+        setText('settings-btn', t.settings);
+        setSelectorText('.high-score-label', t.highScore);
 
         // Game Screen
-        document.querySelector('#game-screen .stat-box:nth-child(1) .stat-label').textContent = t.score;
-        document.querySelector('#game-screen .stat-box:nth-child(2) .stat-label').textContent = t.time;
-        document.querySelector('.rotation-hint span').textContent = t.rotateHint;
+        setSelectorText('#game-screen .stat-box:nth-child(1) .stat-label', t.score);
+        setSelectorText('#game-screen .stat-box:nth-child(2) .stat-label', t.time);
+        setSelectorText('.rotation-hint span', t.rotateHint);
 
         // Game Over
-        document.querySelector('#game-over-screen h2').textContent = t.gameOver;
-        document.querySelector('#game-over-screen .final-stats p:nth-child(1)').innerHTML = `${t.score}: <span id="final-score">0</span>`;
-        document.querySelector('#game-over-screen .final-stats p:nth-child(2)').innerHTML = `${t.highScore}: <span id="final-high-score">0</span>`;
-        document.getElementById('watch-ad-btn').textContent = t.watchAd;
-        document.getElementById('restart-btn').textContent = t.restart;
-        document.getElementById('home-btn').textContent = t.home;
+        setSelectorText('#game-over-screen h2', t.gameOver);
+        const finalScoreLabel = document.querySelector('#game-over-screen .final-stats p:nth-child(1)');
+        if (finalScoreLabel) finalScoreLabel.innerHTML = `${t.score}: <span id="final-score">0</span>`;
+
+        const finalHighLabel = document.querySelector('#game-over-screen .final-stats p:nth-child(2)');
+        if (finalHighLabel) finalHighLabel.innerHTML = `${t.highScore}: <span id="final-high-score">0</span>`;
+
+        setText('watch-ad-btn', t.watchAd);
+        setText('restart-btn', t.restart);
+        setText('home-btn', t.home);
 
         // Settings
-        document.querySelector('#settings-screen h2').textContent = t.settings;
-        document.getElementById('label-lang').textContent = t.lang;
-        document.getElementById('label-sound').textContent = t.sound;
-        document.getElementById('label-vibe').textContent = t.vibration;
-        document.getElementById('settings-close-btn').textContent = t.back;
+        setSelectorText('#settings-screen h2', t.settings);
+        setText('label-lang', t.lang);
+        setText('label-sound', t.sound);
+        setText('label-vibe', t.vibration);
+        setText('settings-close-btn', t.back);
 
         // Active Button States
-        document.getElementById('lang-tr-btn').classList.toggle('active', lang === 'tr');
-        document.getElementById('lang-en-btn').classList.toggle('active', lang === 'en');
+        const trBtn = document.getElementById('lang-tr-btn');
+        const enBtn = document.getElementById('lang-en-btn');
+        if (trBtn) trBtn.classList.toggle('active', lang === 'tr');
+        if (enBtn) enBtn.classList.toggle('active', lang === 'en');
     },
 
     setupAndroidBackButton: function () {
@@ -115,41 +145,46 @@ const UI = {
     },
 
     setupEventListeners: function () {
-        document.getElementById('start-btn').addEventListener('click', () => {
+        const addSafeListener = (id, event, cb) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(event, cb);
+        };
+
+        addSafeListener('start-btn', 'click', () => {
             SoundManager.playClick();
             this.showScreen('game');
             Game.start();
-            Game.resize(); // Ensure canvas is correctly sized
+            Game.resize();
         });
 
-        document.getElementById('settings-btn').addEventListener('click', () => {
+        addSafeListener('settings-btn', 'click', () => {
             SoundManager.playClick();
             this.showScreen('settings');
         });
 
-        document.getElementById('settings-close-btn').addEventListener('click', () => {
+        addSafeListener('settings-close-btn', 'click', () => {
             SoundManager.playClick();
             this.showScreen('menu');
         });
 
-        document.getElementById('restart-btn').addEventListener('click', () => {
+        addSafeListener('restart-btn', 'click', () => {
             SoundManager.playClick();
             Game.start();
             this.showScreen('game');
         });
 
-        document.getElementById('home-btn').addEventListener('click', () => {
+        addSafeListener('home-btn', 'click', () => {
             SoundManager.playClick();
             this.showScreen('menu');
             this.updateHighScoreDisplay();
         });
 
-        document.getElementById('watch-ad-btn').addEventListener('click', () => {
+        addSafeListener('watch-ad-btn', 'click', () => {
             SoundManager.playClick();
             this.handleRewardedAd();
         });
 
-        document.getElementById('lang-tr-btn').addEventListener('click', () => {
+        addSafeListener('lang-tr-btn', 'click', () => {
             const settings = StorageManager.getSettings();
             settings.lang = 'tr';
             StorageManager.saveSettings(settings);
@@ -157,7 +192,7 @@ const UI = {
             SoundManager.playClick();
         });
 
-        document.getElementById('lang-en-btn').addEventListener('click', () => {
+        addSafeListener('lang-en-btn', 'click', () => {
             const settings = StorageManager.getSettings();
             settings.lang = 'en';
             StorageManager.saveSettings(settings);
@@ -165,17 +200,23 @@ const UI = {
             SoundManager.playClick();
         });
 
-        document.getElementById('sound-toggle').addEventListener('change', (e) => {
-            const settings = StorageManager.getSettings();
-            settings.sound = e.target.checked;
-            StorageManager.saveSettings(settings);
-        });
+        const soundToggle = document.getElementById('sound-toggle');
+        if (soundToggle) {
+            soundToggle.addEventListener('change', (e) => {
+                const settings = StorageManager.getSettings();
+                settings.sound = e.target.checked;
+                StorageManager.saveSettings(settings);
+            });
+        }
 
-        document.getElementById('vibe-toggle').addEventListener('change', (e) => {
-            const settings = StorageManager.getSettings();
-            settings.vibration = e.target.checked;
-            StorageManager.saveSettings(settings);
-        });
+        const vibeToggle = document.getElementById('vibe-toggle');
+        if (vibeToggle) {
+            vibeToggle.addEventListener('change', (e) => {
+                const settings = StorageManager.getSettings();
+                settings.vibration = e.target.checked;
+                StorageManager.saveSettings(settings);
+            });
+        }
     },
 
     showScreen: function (screenKey) {
@@ -215,9 +256,16 @@ const UI = {
     },
 
     loadSettingsToUI: function () {
-        const settings = StorageManager.getSettings();
-        document.getElementById('sound-toggle').checked = settings.sound;
-        document.getElementById('vibe-toggle').checked = settings.vibration;
+        try {
+            const settings = StorageManager.getSettings();
+            const soundToggle = document.getElementById('sound-toggle');
+            if (soundToggle) soundToggle.checked = settings.sound;
+
+            const vibeToggle = document.getElementById('vibe-toggle');
+            if (vibeToggle) vibeToggle.checked = settings.vibration;
+        } catch (e) {
+            console.error("UI: Failed to load settings", e);
+        }
     },
 
     renderInventory: function (inventory) {

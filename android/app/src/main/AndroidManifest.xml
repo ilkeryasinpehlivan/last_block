@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.lastbreath.blockgame">
-    <attribution android:tag="google-ads" android:label="@string/attribution_label" />
-    <attribution android:tag="google-ad-id" android:label="@string/attribution_label" />
-    <attribution android:tag="com.google.android.gms.ads" android:label="@string/attribution_label" />
-    <attribution android:tag="com.revenuecat.purchases" android:label="@string/attribution_label" />
-
+    
     <queries>
         <intent>
             <action android:name="com.google.android.gms.ads.service.START" />
@@ -56,5 +52,6 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 </manifest>

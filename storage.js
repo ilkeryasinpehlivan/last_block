@@ -36,12 +36,17 @@ const StorageManager = {
      * @returns {Object}
      */
     getSettings: function () {
-        const settings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-        return settings ? JSON.parse(settings) : {
-            sound: true,
-            vibration: true,
-            lang: 'tr'
-        };
+        try {
+            const settings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+            return settings ? JSON.parse(settings) : {
+                sound: true,
+                vibration: true,
+                lang: 'tr'
+            };
+        } catch (e) {
+            console.error("StorageManager: getSettings failed", e);
+            return { sound: true, vibration: true, lang: 'tr' };
+        }
     },
 
     /**
