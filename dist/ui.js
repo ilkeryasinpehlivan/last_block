@@ -134,14 +134,45 @@ const UI = {
     },
 
     handleBackButton: function () {
-        const lang = StorageManager.getSettings().lang || 'tr';
-        const t = this.translations[lang];
-
         if (this.currentScreen === 'game') {
-            if (confirm(t.exitConfirm)) this.showScreen('menu');
+            this.showConfirm(() => this.showScreen('menu'));
         } else if (this.currentScreen !== 'menu') {
             this.showScreen('menu');
         }
+    },
+
+    showConfirm: function (onConfirm) {
+        const lang = StorageManager.getSettings().lang || 'tr';
+        const t = this.translations[lang];
+        const modal = document.getElementById('custom-modal');
+        const confirmBtn = document.getElementById('modal-confirm-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+        const messageEl = document.getElementById('modal-message');
+
+        if (!modal) {
+            if (confirm(t.exitConfirm)) onConfirm();
+            return;
+        }
+
+        messageEl.textContent = t.exitConfirm;
+        modal.classList.add('active');
+
+        const close = () => {
+            modal.classList.remove('active');
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+        };
+
+        confirmBtn.onclick = () => {
+            SoundManager.playClick();
+            close();
+            onConfirm();
+        };
+
+        cancelBtn.onclick = () => {
+            SoundManager.playClick();
+            close();
+        };
     },
 
     setupEventListeners: function () {
@@ -160,6 +191,11 @@ const UI = {
         addSafeListener('settings-btn', 'click', () => {
             SoundManager.playClick();
             this.showScreen('settings');
+        });
+
+        addSafeListener('game-home-btn', 'click', () => {
+            SoundManager.playClick();
+            this.handleBackButton();
         });
 
         addSafeListener('settings-close-btn', 'click', () => {

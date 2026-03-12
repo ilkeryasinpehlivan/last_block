@@ -50,6 +50,13 @@
                         <span class="stat-label">SKOR</span>
                         <span id="current-score" class="stat-value">0</span>
                     </div>
+
+                    <button id="game-home-btn" class="icon-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+                        </svg>
+                    </button>
+
                     <div class="stat-box">
                         <span class="stat-label">SÜRE</span>
                         <span id="game-timer" class="stat-value">00:00</span>
@@ -59,15 +66,13 @@
                 <div id="game-container">
                     <canvas id="game-canvas"></canvas>
                 </div>
-
+                <div class="rotation-hint">
+                    <span>Dokunarak Döndür • Sürükleyerek Yerleştir</span>
+                </div>
                 <div id="piece-inventory" class="piece-tray">
                     <div class="inventory-slot" data-index="0"></div>
                     <div class="inventory-slot" data-index="1"></div>
                     <div class="inventory-slot" data-index="2"></div>
-                </div>
-
-                <div class="rotation-hint">
-                    <span>Dokunarak Döndür • Sürükleyerek Yerleştir</span>
                 </div>
             </section>
 
@@ -124,10 +129,25 @@
             </section>
         </main>
 
-        <!-- Global Banner Footer (Fixed 50px) -->
-        <footer class="game-footer">
-            <div id="banner-ad-placeholder" class="banner-ad"></div>
         </footer>
+
+        <!-- Custom Confirmation Modal -->
+        <div id="custom-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" width="48" height="48">
+                        <path fill="currentColor"
+                            d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20Z" />
+                    </svg>
+                </div>
+                <h3 id="modal-title">ONAY</h3>
+                <p id="modal-message">Oyundan çıkmak istiyor musunuz?</p>
+                <div class="modal-buttons">
+                    <button id="modal-cancel-btn" class="btn btn-secondary">İPTAL</button>
+                    <button id="modal-confirm-btn" class="btn btn-primary">EVET</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->

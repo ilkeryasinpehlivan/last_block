@@ -1,5 +1,6 @@
 /**
  * game.js (Refactored for Tetromino Block Puzzle)
+ * copy index.html dist\index.html; copy style.css dist\style.css; copy ui.js dist\ui.js
  */
 
 const GameState = {
@@ -194,6 +195,9 @@ const Game = {
     setupInput: function () {
         const handleDown = (e, isTouch) => {
             if (this.state !== GameState.PLAYING) return;
+
+            // Unblock UI buttons from global preventDefault
+            if (isTouch && e.target.closest('button')) return;
             if (isTouch) e.preventDefault();
 
             const clientX = isTouch ? e.touches[0].clientX : e.clientX;

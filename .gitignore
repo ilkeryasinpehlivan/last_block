@@ -5,7 +5,7 @@ node_modules/
 .env
 
 # build
-dist/
+#dist/
 build/
 
 # logs
