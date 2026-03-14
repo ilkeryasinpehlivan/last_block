@@ -70,6 +70,7 @@ const Game = {
 
             UI.init();
             Effects.init(this.ctx);
+            SoundManager.init(); // Uygulama durumunu dinlemek için erken başlatıyoruz
 
             window.addEventListener('resize', () => this.resize());
             this.setupInput();
@@ -108,6 +109,7 @@ const Game = {
         this.spawnRound();
         UI.updateScore(0);
         showBannerAd();
+        SoundManager.playMusic();
     },
 
     spawnRound: function () {
@@ -585,6 +587,7 @@ const Game = {
         this.ctx.shadowBlur = 0;
         this.ctx.globalAlpha = 1.0;
     }
+    
 };
 
 const startApp = async () => {

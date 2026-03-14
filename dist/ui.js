@@ -22,6 +22,7 @@ const UI = {
             vibration: "TİTREŞİM",
             lang: "DİL",
             back: "GERİ",
+            music: "MÜZİK",
             rotateHint: "Dokunarak Döndür • Sürükleyerek Yerleştir",
             exitConfirm: "Oyundan çıkmak istiyor musunuz?"
         },
@@ -39,6 +40,7 @@ const UI = {
             vibration: "VIBRATION",
             lang: "LANGUAGE",
             back: "BACK",
+            music: "MUSIC",
             rotateHint: "Tap to Rotate • Drag to Place",
             exitConfirm: "Do you want to exit the game?"
         }
@@ -115,6 +117,7 @@ const UI = {
         setSelectorText('#settings-screen h2', t.settings);
         setText('label-lang', t.lang);
         setText('label-sound', t.sound);
+        setText('label-music', t.music);
         setText('label-vibe', t.vibration);
         setText('settings-close-btn', t.back);
 
@@ -245,6 +248,18 @@ const UI = {
             });
         }
 
+        const musicToggle = document.getElementById('music-toggle');
+        if (musicToggle) {
+            musicToggle.addEventListener('change', (e) => {
+                const settings = StorageManager.getSettings();
+                settings.music = e.target.checked;
+                StorageManager.saveSettings(settings);
+                
+                if (settings.music) SoundManager.playMusic();
+                else SoundManager.stopMusic();
+            });
+        }
+
         const vibeToggle = document.getElementById('vibe-toggle');
         if (vibeToggle) {
             vibeToggle.addEventListener('change', (e) => {
@@ -296,6 +311,9 @@ const UI = {
             const settings = StorageManager.getSettings();
             const soundToggle = document.getElementById('sound-toggle');
             if (soundToggle) soundToggle.checked = settings.sound;
+
+            const musicToggle = document.getElementById('music-toggle');
+            if (musicToggle) musicToggle.checked = settings.music;
 
             const vibeToggle = document.getElementById('vibe-toggle');
             if (vibeToggle) vibeToggle.checked = settings.vibration;
