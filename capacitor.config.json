@@ -1,0 +1,6 @@
+{
+  "appId": "com.lastbreath.blockgame",
+  "appName": "last_block",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

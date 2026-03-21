@@ -13,6 +13,13 @@
 </head>
 
 <body>
+    <!-- Custom Video Splash Screen -->
+    <div id="splash-screen">
+        <video id="splash-video" muted playsinline autoplay style="opacity: 0;">
+            <source src="img/splash_screen.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <script>
         console.log("Startup: Core scripts loading...");
         window.onerror = function (msg, url, line, col, error) {
