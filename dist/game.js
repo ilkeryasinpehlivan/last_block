@@ -43,6 +43,8 @@ const Game = {
     cellSize: 0,
     canvas: null,
     ctx: null,
+    dragCanvas: null,
+    dragCtx: null,
     score: 0,
     lastCombo: 0,
     startTime: 0,
@@ -65,6 +67,12 @@ const Game = {
             if (!this.canvas) throw new Error("Canvas not found");
 
             this.ctx = this.canvas.getContext('2d');
+            
+            this.dragCanvas = document.getElementById('drag-canvas');
+            if (this.dragCanvas) {
+                this.dragCtx = this.dragCanvas.getContext('2d');
+            }
+
             this.resize();
             this.initGrid();
 
@@ -92,6 +100,11 @@ const Game = {
         this.canvas.width = size;
         this.canvas.height = size;
         this.cellSize = size / this.gridSize;
+
+        if (this.dragCanvas) {
+            this.dragCanvas.width = window.innerWidth;
+            this.dragCanvas.height = window.innerHeight;
+        }
     },
 
     initGrid: function () {
@@ -217,8 +230,9 @@ const Game = {
                     this.dragStartPos = { x: clientX, y: clientY };
 
                     const pos = this.getMousePosFromCoords(clientX, clientY);
-                    this.dragX = pos.x;
-                    this.dragY = pos.y;
+                    this.dragX = clientX; // Store screen-space X for overlay
+                    this.dragY = clientY; // Store screen-space Y for overlay
+                    if (this.dragCanvas) this.dragCanvas.style.display = 'block';
                 }
             }
         };
@@ -233,8 +247,8 @@ const Game = {
                 if (dist > 10) this.hasMoved = true;
 
                 const pos = this.getMousePosFromCoords(clientX, clientY);
-                this.dragX = pos.x;
-                this.dragY = pos.y;
+                this.dragX = clientX; // Store screen-space X for overlay
+                this.dragY = clientY; // Store screen-space Y for overlay
             }
         };
 
@@ -254,7 +268,7 @@ const Game = {
 
                 this.isDragging = false;
                 this.hasMoved = false;
-                // Keep selected for visual but stop dragging
+                if (this.dragCanvas) this.dragCanvas.style.display = 'none';
             }
         };
 
@@ -519,18 +533,27 @@ const Game = {
         if (this.isDragging && this.selectedIndex !== -1) {
             const piece = this.inventory[this.selectedIndex];
 
-            // Calculate grid position for ghost
+            // Clear Overlay
+            if (this.dragCtx) {
+                this.dragCtx.clearRect(0, 0, this.dragCanvas.width, this.dragCanvas.height);
+            }
+
+            // Calculate grid position for ghost (using screen coords converted to canvas coords)
+            const canvasPos = this.getMousePosFromCoords(this.dragX, this.dragY);
             const pieceRows = piece.shape.length;
             const pieceCols = piece.shape[0].length;
-            const gridCol = Math.round((this.dragX / this.cellSize) - (pieceCols / 2));
-            const gridRow = Math.round((this.dragY / this.cellSize) - (pieceRows / 2));
+            const gridCol = Math.round((canvasPos.x / this.cellSize) - (pieceCols / 2));
+            const gridRow = Math.round((canvasPos.y / this.cellSize) - (pieceRows / 2));
 
-            // Grid highlighting ghost
+            // Grid highlighting ghost (on main canvas)
             if (this.canPlace(gridRow, gridCol, piece.shape)) {
                 this.drawGridPreview(gridRow, gridCol, piece);
             }
 
-            this.drawFloatingPiece(this.dragX, this.dragY, piece);
+            // Floating piece (on overlay canvas)
+            if (this.dragCtx) {
+                this.drawFloatingPiece(this.dragX, this.dragY, piece, this.dragCtx);
+            }
         }
 
         Effects.updateAndDraw(0);
@@ -546,7 +569,8 @@ const Game = {
         }
     },
 
-    drawFloatingPiece: function (x, y, piece) {
+    drawFloatingPiece: function (x, y, piece, targetCtx) {
+        const ctx = targetCtx || this.ctx;
         const rows = piece.shape.length;
         const cols = piece.shape[0].length;
         const startX = x - (cols * this.cellSize) / 2;
@@ -559,13 +583,13 @@ const Game = {
                     const py = startY + r * this.cellSize + 2;
                     const size = this.cellSize - 4;
 
-                    this.ctx.fillStyle = piece.color;
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.shadowColor = piece.color;
-                    this.ctx.beginPath();
-                    this.ctx.roundRect(px, py, size, size, 8);
-                    this.ctx.fill();
-                    this.ctx.shadowBlur = 0;
+                    ctx.fillStyle = piece.color;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = piece.color;
+                    ctx.beginPath();
+                    ctx.roundRect(px, py, size, size, 8);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
                 }
             }
         }
