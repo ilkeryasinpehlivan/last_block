@@ -59,6 +59,7 @@ const Game = {
     isDragging: false,
     hasMoved: false,
     dragStartPos: { x: 0, y: 0 },
+    dragOffsetY: 100,
 
     init: function () {
         console.log("Game: Initializing...");
@@ -67,7 +68,7 @@ const Game = {
             if (!this.canvas) throw new Error("Canvas not found");
 
             this.ctx = this.canvas.getContext('2d');
-            
+
             this.dragCanvas = document.getElementById('drag-canvas');
             if (this.dragCanvas) {
                 this.dragCtx = this.dragCanvas.getContext('2d');
@@ -229,9 +230,9 @@ const Game = {
                     this.hasMoved = false;
                     this.dragStartPos = { x: clientX, y: clientY };
 
-                    const pos = this.getMousePosFromCoords(clientX, clientY);
+                    const pos = this.getMousePosFromCoords(clientX, clientY - this.dragOffsetY);
                     this.dragX = clientX; // Store screen-space X for overlay
-                    this.dragY = clientY; // Store screen-space Y for overlay
+                    this.dragY = clientY - this.dragOffsetY; // Store screen-space Y (offset) for overlay
                     if (this.dragCanvas) this.dragCanvas.style.display = 'block';
                 }
             }
@@ -246,9 +247,9 @@ const Game = {
                 const dist = Math.hypot(clientX - this.dragStartPos.x, clientY - this.dragStartPos.y);
                 if (dist > 10) this.hasMoved = true;
 
-                const pos = this.getMousePosFromCoords(clientX, clientY);
+                const pos = this.getMousePosFromCoords(clientX, clientY - this.dragOffsetY);
                 this.dragX = clientX; // Store screen-space X for overlay
-                this.dragY = clientY; // Store screen-space Y for overlay
+                this.dragY = clientY - this.dragOffsetY; // Store screen-space Y (offset) for overlay
             }
         };
 
@@ -256,7 +257,7 @@ const Game = {
             if (this.isDragging) {
                 const clientX = isTouch ? e.changedTouches[0].clientX : e.clientX;
                 const clientY = isTouch ? e.changedTouches[0].clientY : e.clientY;
-                const pos = this.getMousePosFromCoords(clientX, clientY);
+                const pos = this.getMousePosFromCoords(clientX, clientY - this.dragOffsetY);
 
                 if (!this.hasMoved) {
                     // It was a tap -> Rotate
