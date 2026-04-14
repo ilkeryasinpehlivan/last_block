@@ -612,57 +612,12 @@ const Game = {
         this.ctx.globalAlpha = 1.0;
     },
 
-    hideSplashScreen: function () {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-            splash.classList.add('fade-out');
-            setTimeout(() => {
-                splash.style.display = 'none';
-                // Trigger game init or menu if needed
-                console.log("Splash Screen Hidden");
-            }, 800);
-        }
-    },
-
-    initSplashScreen: function () {
-        const splashVideo = document.getElementById('splash-video');
-        const splashScreen = document.getElementById('splash-screen');
-
-        if (!splashVideo) {
-            this.hideSplashScreen();
-            return;
-        }
-
-        // Safety Timeout (5 seconds)
-        const safetyTimeout = setTimeout(() => {
-            console.log("Splash Screen Safety Timeout");
-            this.hideSplashScreen();
-        }, 5000);
-
-        splashVideo.onplaying = () => {
-            splashVideo.style.opacity = "1";
-        };
-
-        splashVideo.onended = () => {
-            clearTimeout(safetyTimeout);
-            this.hideSplashScreen();
-        };
-
-        // Proactive Play
-        splashVideo.play().catch(err => {
-            console.warn("Autoplay prevented or video error:", err);
-            clearTimeout(safetyTimeout);
-            this.hideSplashScreen();
-        });
-    }
 
 };
 
 const startApp = async () => {
     console.log("App: startApp triggered - State:", document.readyState);
     try {
-        // Initialize Custom Video Splash Screen
-        Game.initSplashScreen();
 
         // Initialize Game
         Game.init();
